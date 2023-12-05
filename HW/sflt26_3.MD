@@ -21,8 +21,8 @@ rsync -av --delete --checksum --exclude '.*' ~/ /tmp/backup
 /tmp/backup - целевая директория.
 ```
 
-![Название скриншота 1](img\sflt26_hw3_1.png)
-![Название скриншота 2](img\sflt26_hw3_2.png)
+![Название скриншота 1](https://github.com/Udjin79/netology_hw/blob/main/img/sflt26_hw3_1.png?raw=true)
+![Название скриншота 2](https://github.com/Udjin79/netology_hw/blob/main/img/sflt26_hw3_2.png?raw=true)
 
 ---
 ### Задание 2
@@ -57,8 +57,8 @@ else
 fi
 ```
 
-![Название скриншота 3](img\sflt26_hw3_3.png)
-![Название скриншота 4](img\sflt26_hw3_4.png)
+![Название скриншота 3](https://github.com/Udjin79/netology_hw/blob/main/img/sflt26_hw3_3.png?raw=true)
+![Название скриншота 4](https://github.com/Udjin79/netology_hw/blob/main/img/sflt26_hw3_4.png?raw=true)
 
 ---
 ## Дополнительные задания (со звездочкой*)
@@ -72,10 +72,14 @@ fi
 - На проверку направьте команду и результат ее выполнения в виде скриншота
 
 ```bash
+rsync -av --delete --checksum --exclude '.*' --bwlimit=500 ~/ /tmp/backup
+
+
 rsync -av --delete --checksum --exclude '.*' --bwlimit=1000 ~/ /tmp/backup
 ```
 
-![Название скриншота 5](img\sflt26_hw3_5.png)
+![Название скриншота 5](https://github.com/Udjin79/netology_hw/blob/main/img/sflt26_hw3_5.png?raw=true)
+![Название скриншота 8](https://github.com/Udjin79/netology_hw/blob/main/img/sflt26_hw3_8.png?raw=true)
 
 ---
 ### Задание 4
@@ -114,5 +118,5 @@ LATEST_BACKUP=$(readlink $BACKUP_DIR/latest)
 rsync -av $BACKUP_DIR/$LATEST_BACKUP/ ~/restore_destination
 ```
 
-![Название скриншота 6](img\sflt26_hw3_6.png)
-![Название скриншота 7](img\sflt26_hw3_7.png)
+![Название скриншота 6](https://github.com/Udjin79/netology_hw/blob/main/img/sflt26_hw3_6.png?raw=true)
+![Название скриншота 7](https://github.com/Udjin79/netology_hw/blob/main/img/sflt26_hw3_7.png?raw=true)
