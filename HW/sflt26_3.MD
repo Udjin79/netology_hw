@@ -78,8 +78,8 @@ rsync -av --delete --checksum --exclude '.*' --bwlimit=500 ~/ /tmp/backup
 rsync -av --delete --checksum --exclude '.*' --bwlimit=1000 ~/ /tmp/backup
 ```
 
-![Название скриншота 5](https://github.com/Udjin79/netology_hw/blob/main/img/sflt26_hw3_5.png?raw=true)
 ![Название скриншота 8](https://github.com/Udjin79/netology_hw/blob/main/img/sflt26_hw3_8.png?raw=true)
+![Название скриншота 5](https://github.com/Udjin79/netology_hw/blob/main/img/sflt26_hw3_5.png?raw=true)
 
 ---
 ### Задание 4
