@@ -47,7 +47,7 @@ BACKUP_DIR=/tmp/backup
 LOG_FILE=/var/log/backup.log
 
 # Выполнение резервного копирования
-rsync -av --delete --checksum --exclude '.*' $SOURCE_DIR $BACKUP_DIR >> $LOG_FILE 2>&1
+rsync -av --delete --checksum $SOURCE_DIR $BACKUP_DIR >> $LOG_FILE 2>&1
 
 # Проверка успешности выполнения
 if [ $? -eq 0 ]; then
