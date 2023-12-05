@@ -10,21 +10,53 @@
 - Для проверки корректности настройки, разорвите один из кабелей между одним из маршрутизаторов и Switch0 и запустите ping между PC0 и Server0.
 - На проверку отправьте получившуюся схему в формате pkt и скриншот, где виден процесс настройки маршрутизатора.
 
-`Приведите ответ в свободной форме........`
 
-1. `Заполните здесь этапы выполнения, если требуется ....`
-2. `Заполните здесь этапы выполнения, если требуется ....`
-3. `Заполните здесь этапы выполнения, если требуется ....`
-4. `Заполните здесь этапы выполнения, если требуется ....`
-5. `Заполните здесь этапы выполнения, если требуется ....`
-6. 
-
+Router1 Configuration:
 ```
-Поле для вставки кода...
-....
-....
-....
-....
+enable
+configure terminal
+
+interface GigabitEthernet0/0
+ip address 192.168.0.2 255.255.255.0
+standby 0 ip 192.168.0.1
+standby 0 priority 105
+standby 0 preempt
+standby 0 track GigabitEthernet0/1
+
+
+interface GigabitEthernet0/1
+ip address 192.168.1.2 255.255.255.0
+standby 1 ip 192.168.1.1
+standby 1 priority 105
+standby 1 preempt
+standby 1 track GigabitEthernet0/0
+
+end
+write memory
+```
+
+Router2 Configuration:
+```
+enable
+configure terminal
+
+interface GigabitEthernet0/0
+ip address 192.168.0.3 255.255.255.0
+standby 0 ip 192.168.0.1
+standby 0 priority 105
+standby 0 preempt
+standby 0 track GigabitEthernet0/1
+
+
+interface GigabitEthernet0/1
+ip address 192.168.1.3 255.255.255.0
+standby 1 ip 192.168.1.1
+standby 1 priority 105
+standby 1 preempt
+standby 1 track GigabitEthernet0/0
+
+end
+write memory
 ```
 
 `При необходимости прикрепитe сюда скриншоты
