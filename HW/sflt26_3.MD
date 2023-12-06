@@ -47,7 +47,7 @@ BACKUP_DIR=/tmp/backup
 LOG_FILE=/var/log/backup.log
 
 # Выполнение резервного копирования
-rsync -av --delete --checksum --exclude '.*' $SOURCE_DIR $BACKUP_DIR >> $LOG_FILE 2>&1
+rsync -av --delete --checksum $SOURCE_DIR $BACKUP_DIR >> $LOG_FILE 2>&1
 
 # Проверка успешности выполнения
 if [ $? -eq 0 ]; then
@@ -78,8 +78,8 @@ rsync -av --delete --checksum --exclude '.*' --bwlimit=500 ~/ /tmp/backup
 rsync -av --delete --checksum --exclude '.*' --bwlimit=1000 ~/ /tmp/backup
 ```
 
-![Название скриншота 5](https://github.com/Udjin79/netology_hw/blob/main/img/sflt26_hw3_5.png?raw=true)
 ![Название скриншота 8](https://github.com/Udjin79/netology_hw/blob/main/img/sflt26_hw3_8.png?raw=true)
+![Название скриншота 5](https://github.com/Udjin79/netology_hw/blob/main/img/sflt26_hw3_5.png?raw=true)
 
 ---
 ### Задание 4
