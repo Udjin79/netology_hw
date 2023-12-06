@@ -58,9 +58,16 @@ standby 1 track GigabitEthernet0/0
 end
 write memory
 ```
+PKT файл:
+**https://github.com/Udjin79/netology_hw/blob/be13636545a6677f3b590310781a02cc080d67e9/files/sflt26_hw1_hsrp_advanced.pkt**
 
-`При необходимости прикрепитe сюда скриншоты
-![Название скриншота 1](ссылка на скриншот 1)`
+Скриншоты проверки:
+![Название скриншота 1](https://github.com/Udjin79/netology_hw/blob/main/img/sflt26_hw1_1.png?raw=true)
+![Название скриншота 2](https://github.com/Udjin79/netology_hw/blob/main/img/sflt26_hw1_2.png?raw=true)
+![Название скриншота 3](https://github.com/Udjin79/netology_hw/blob/main/img/sflt26_hw1_3.png?raw=true)
+![Название скриншота 4](https://github.com/Udjin79/netology_hw/blob/main/img/sflt26_hw1_4.png?raw=true)
+![Название скриншота 5](https://github.com/Udjin79/netology_hw/blob/main/img/sflt26_hw1_5.png?raw=true)
+![Название скриншота 6](https://github.com/Udjin79/netology_hw/blob/main/img/sflt26_hw1_6.png?raw=true)
 
 
 ---
@@ -82,17 +89,65 @@ write memory
 5. `Заполните здесь этапы выполнения, если требуется ....`
 6. 
 
-```
-Поле для вставки кода...
-....
-....
-....
-....
+
+check_web_server.sh
+```bash
+#!/bin/bash
+
+# Переменные
+WEB_SERVER="localhost"
+WEB_PORT=80
+INDEX_FILE="/var/www/html/index.html"
+
+# Проверка доступности порта веб-сервера
+nc -zv -w 1 $WEB_SERVER $WEB_PORT > /dev/null 2>&1
+PORT_STATUS=$?
+
+# Проверка существования файла index.html
+if [ -f $INDEX_FILE ]; then
+    FILE_STATUS=0
+else
+    FILE_STATUS=1
+fi
+
+# Вернуть код в зависимости от результата проверок
+if [ $PORT_STATUS -eq 0 ] && [ $FILE_STATUS -eq 0 ]; then
+    exit 0
+else
+    exit 1
+fi
 ```
 
-`При необходимости прикрепитe сюда скриншоты
-![Название скриншота 2](ссылка на скриншот 2)`
+keepalived.conf
+```
+global_defs {
+    script_user root
+}
 
+vrrp_script check_web {
+    script "/var/check_web_server.sh"
+    interval 3
+    fall 2
+    rise 2
+}
+
+vrrp_instance VI_1 {
+    state MASTER
+    interface enp0s3
+    virtual_router_id 15
+    priority 255
+    advert_int 1
+    virtual_ipaddress {
+        192.168.1.250/24
+    }
+    track_script {
+        check_web
+    }
+}
+```
+
+![Название скриншота 7](https://github.com/Udjin79/netology_hw/blob/main/img/sflt26_hw1_7.png?raw=true)
+![Название скриншота 8](https://github.com/Udjin79/netology_hw/blob/main/img/sflt26_hw1_8.png?raw=true)
 
 ---
 ## Дополнительные задания (со звездочкой*)
