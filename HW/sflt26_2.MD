@@ -9,26 +9,60 @@
 - Настройте балансировку Round-robin на 4 уровне.
 - На проверку направьте конфигурационный файл haproxy, скриншоты, где видно перенаправление запросов на разные серверы при обращении к HAProxy.
 
-`Приведите ответ в свободной форме........`
+serverXX.py
+```python
+# server1.py
+from http.server import BaseHTTPRequestHandler, HTTPServer
 
-1. `Заполните здесь этапы выполнения, если требуется ....`
-2. `Заполните здесь этапы выполнения, если требуется ....`
-3. `Заполните здесь этапы выполнения, если требуется ....`
-4. `Заполните здесь этапы выполнения, если требуется ....`
-5. `Заполните здесь этапы выполнения, если требуется ....`
-6. 
+class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
+    def do_GET(self):
+        self.send_response(200)
+        self.end_headers()
+        self.wfile.write(b"Server 1")
 
+port = 8001
+httpd = HTTPServer(('localhost', port), SimpleHTTPRequestHandler)
+print(f"Server 1 running on port {port}")
+httpd.serve_forever()
 ```
-Поле для вставки кода...
-....
-....
-....
-....
+
+haproxy.cfg
+```
+global
+    log /dev/log    local0
+    log /dev/log    local1 notice
+    chroot /var/lib/haproxy
+    stats socket /run/haproxy/admin.sock mode 660 level admin expose-fd listeners
+    stats timeout 30s
+    user haproxy
+    group haproxy
+    daemon
+
+defaults
+    log     global
+    mode    tcp
+    option  tcplog
+    option  dontlognull
+    timeout connect 5000
+    timeout client  50000
+    timeout server  50000
+
+frontend my_frontend
+    bind *:8080
+    mode tcp
+    default_backend my_backend
+
+backend my_backend
+    mode tcp
+    balance roundrobin
+    server server1 127.0.0.1:8001 check
+    server server2 127.0.0.1:8002 check
+    server server3 127.0.0.1:8003 check
 ```
 
-`При необходимости прикрепитe сюда скриншоты
-![Название скриншота 1](ссылка на скриншот 1)`
-
+![Название скриншота 1](https://github.com/Udjin79/netology_hw/blob/main/img/sflt26_hw2_1.png?raw=true)
+![Название скриншота 2](https://github.com/Udjin79/netology_hw/blob/main/img/sflt26_hw2_2.png?raw=true)
+![Название скриншота 3](https://github.com/Udjin79/netology_hw/blob/main/img/sflt26_hw2_3.png?raw=true)
 
 ---
 
@@ -39,26 +73,46 @@
 - HAproxy должен балансировать только тот http-трафик, который адресован домену example.local
 - На проверку направьте конфигурационный файл haproxy, скриншоты, где видно перенаправление запросов на разные серверы при обращении к HAProxy c использованием домена example.local и без него.
 
-`Приведите ответ в свободной форме........`
-
-1. `Заполните здесь этапы выполнения, если требуется ....`
-2. `Заполните здесь этапы выполнения, если требуется ....`
-3. `Заполните здесь этапы выполнения, если требуется ....`
-4. `Заполните здесь этапы выполнения, если требуется ....`
-5. `Заполните здесь этапы выполнения, если требуется ....`
-6. 
-
+haproxy.cfg
 ```
-Поле для вставки кода...
-....
-....
-....
-....
+global
+    log /dev/log    local0
+    log /dev/log    local1 notice
+    chroot /var/lib/haproxy
+    stats socket /run/haproxy/admin.sock mode 660 level admin expose-fd listeners
+    stats timeout 30s
+    user haproxy
+    group haproxy
+    daemon
+
+defaults
+    log     global
+    mode    http
+    option  httplog
+    option  dontlognull
+    timeout connect 5000
+    timeout client  50000
+    timeout server  50000
+
+frontend my_frontend
+    bind *:80
+    mode http
+    acl example_local hdr_end(host) -i example.local
+
+    use_backend servers if example_local
+
+backend servers
+    mode http
+    balance roundrobin
+    server server1 127.0.0.1:8001 weight 2
+    server server2 127.0.0.1:8002 weight 3
+    server server3 127.0.0.1:8003 weight 4
 ```
 
-`При необходимости прикрепитe сюда скриншоты
-![Название скриншота 2](ссылка на скриншот 2)`
-
+![Название скриншота 4](https://github.com/Udjin79/netology_hw/blob/main/img/sflt26_hw2_4.png?raw=true)
+![Название скриншота 5](https://github.com/Udjin79/netology_hw/blob/main/img/sflt26_hw2_5.png?raw=true)
+![Название скриншота 6](https://github.com/Udjin79/netology_hw/blob/main/img/sflt26_hw2_6.png?raw=true)
+![Название скриншота 7](https://github.com/Udjin79/netology_hw/blob/main/img/sflt26_hw2_7.png?raw=true)
 
 ---
 
