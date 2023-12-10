@@ -151,8 +151,9 @@ resource "yandex_lb_network_load_balancer" "lb-app" {
 2. Скриншот статуса балансировщика и целевой группы.
 3. Скриншот страницы, которая открылась при запросе IP-адреса балансировщика.
 
-
-```#cloud-config
+meta.yml
+```yaml
+#cloud-config
 users:
  - name: username
    groups: sudo
@@ -172,3 +173,5 @@ runcmd:
  - systemctl start nginx
  - sudo systemctl enable nginx
  ```
+ ![Название скриншота 5](https://github.com/Udjin79/netology_hw/blob/main/img/sflt26_hw4_5.png?raw=true)
+ ![Название скриншота 6](https://github.com/Udjin79/netology_hw/blob/main/img/sflt26_hw4_6.png?raw=true)
