@@ -25,25 +25,112 @@
 3. Скриншот страницы, которая открылась при запросе IP-адреса балансировщика.
 
 
-`Приведите ответ в свободной форме........`
+```hcl
+terraform {
+  required_providers {
+    yandex = {
+      source = "yandex-cloud/yandex"
+    }
+  }
+}
 
-1. `Заполните здесь этапы выполнения, если требуется ....`
-2. `Заполните здесь этапы выполнения, если требуется ....`
-3. `Заполните здесь этапы выполнения, если требуется ....`
-4. `Заполните здесь этапы выполнения, если требуется ....`
-5. `Заполните здесь этапы выполнения, если требуется ....`
-6. 
+variable "yandex_cloud_token" {
+  type        = string
+  description = "Input yandex_cloud_token"
+}
 
+provider "yandex" {
+  token     = var.yandex_cloud_token
+  cloud_id  = "b1glclf9vqrlnq5vce1a"
+  folder_id = "b1g66egctakfn2stnfi7"
+  zone      = "ru-central1-a"
+}
+
+resource "yandex_vpc_network" "netology-network" {
+  name = "netology-network"
+}
+
+resource "yandex_vpc_subnet" "netology-subnet" {
+  name           = "subnet-netology"
+  zone           = "ru-central1-a"
+  network_id     = yandex_vpc_network.netology-network.id
+  v4_cidr_blocks = ["192.168.10.0/24"]
+}
+
+resource "yandex_compute_instance" "vm" {
+  count = 2
+
+  name = "vm${count.index + 1}"
+
+  resources {
+    cores  = 2
+    memory = 2
+  }
+
+  boot_disk {
+    initialize_params {
+      image_id = "fd87e3vsemiab8q1tl0h"
+    }
+  }
+
+  network_interface {
+    subnet_id = yandex_vpc_subnet.netology-subnet.id
+    nat       = true
+  }
+
+  metadata = {
+    user-data = "${file("./meta.yml")}"
+  }
+}
+
+resource "yandex_lb_target_group" "app_group" {
+  name = "app-target-group"
+
+  dynamic "target" {
+    for_each = [for s in yandex_compute_instance.vm : {
+      address   = s.network_interface.0.ip_address
+      subnet_id = s.network_interface.0.subnet_id
+    }]
+
+    content {
+      subnet_id = target.value.subnet_id
+      address   = target.value.address
+    }
+  }
+
+}
+
+resource "yandex_lb_network_load_balancer" "lb-app" {
+  name = "loadbalancer"
+  type = "external"
+
+  listener {
+    name        = "listener"
+    port        = 80
+    target_port = 80
+
+    external_address_spec {
+      ip_version = "ipv4"
+    }
+  }
+
+  attached_target_group {
+    target_group_id = yandex_lb_target_group.app_group.id
+    healthcheck {
+      name = "http"
+      http_options {
+        port = 80
+        path = "/"
+      }
+    }
+  }
+}
 ```
-Поле для вставки кода...
-....
-....
-....
-....
-```
 
-`При необходимости прикрепитe сюда скриншоты
-![Название скриншота 1](ссылка на скриншот 1)`
+![Название скриншота 1](https://github.com/Udjin79/netology_hw/blob/main/img/sflt26_hw4_1.png?raw=true)
+![Название скриншота 2](https://github.com/Udjin79/netology_hw/blob/main/img/sflt26_hw4_2.png?raw=true)
+![Название скриншота 3](https://github.com/Udjin79/netology_hw/blob/main/img/sflt26_hw4_3.png?raw=true)
+![Название скриншота 4](https://github.com/Udjin79/netology_hw/blob/main/img/sflt26_hw4_4.png?raw=true)
 
 ---
 ## Дополнительные задания (со звездочкой*)
