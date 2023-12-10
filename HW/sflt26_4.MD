@@ -152,14 +152,23 @@ resource "yandex_lb_network_load_balancer" "lb-app" {
 3. Скриншот страницы, которая открылась при запросе IP-адреса балансировщика.
 
 
-`Приведите ответ в свободной форме........`
+```#cloud-config
+users:
+ - name: username
+   groups: sudo
+   shell: /bin/bash
+   sudo: ['ALL=(ALL) NOPASSWD:ALL']
+   ssh-authorized-keys:
+     - ssh-rsa qqqqqqqqqqqqqqqqqqq
+     - ssh-ed25519 zzzzzzzzzzzzzzzzzz
 
-1. `Заполните здесь этапы выполнения, если требуется ....`
-2. `Заполните здесь этапы выполнения, если требуется ....`
-3. `Заполните здесь этапы выполнения, если требуется ....`
-4. `Заполните здесь этапы выполнения, если требуется ....`
-5. `Заполните здесь этапы выполнения, если требуется ....`
-6. 
+repo_update: true
+repo_upgrade: all
 
-`При необходимости прикрепитe сюда скриншоты
-![Название скриншота](ссылка на скриншот)`
+packages:
+ - nginx
+
+runcmd:
+ - systemctl start nginx
+ - sudo systemctl enable nginx
+ ```
