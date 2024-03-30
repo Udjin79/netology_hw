@@ -4,192 +4,213 @@
 
 ### Задание 1
 
-### Создание репозитория и первого коммита
+Создадим аккаунт в GitLab, если у вас его ещё нет:
 
-1. Зарегистрируйте аккаунт на [https://github.com/](https://github.com/). Если предпочитаете другое хранилище для репозитория, можно использовать его.
-2. Создайте публичный репозиторий, который будете использовать дальше на протяжении всего курса, желательное с названием `devops-netology`.
-   Обязательно поставьте галочку `Initialize this repository with a README`. 
-3. Создайте [авторизационный токен](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token) для клонирования репозитория.
-4. Склонируйте репозиторий, используя протокол HTTPS (`git clone ...`).
-5. Перейдите в каталог с клоном репозитория (`cd devops-netology`).
-6. Произведите первоначальную настройку Git, указав своё настоящее имя, чтобы нам было проще общаться, и email (`git config --global user.name` и `git config --global user.email johndoe@example.com`). 
-7. Выполните команду `git status` и запомните результат.
-8. Отредактируйте файл `README.md` любым удобным способом, тем самым переведя файл в состояние `Modified`.
-9. Ещё раз выполните `git status` и продолжайте проверять вывод этой команды после каждого следующего шага. 
-10. Теперь посмотрите изменения в файле `README.md`, выполнив команды `git diff` и `git diff --staged`.
-11. Переведите файл в состояние `staged` (или, как говорят, просто добавьте файл в коммит) командой `git add README.md`.
-12. И ещё раз выполните команды `git diff` и `git diff --staged`. Поиграйте с изменениями и этими командами, чтобы чётко понять, что и когда они отображают. 
-13. Теперь можно сделать коммит `git commit -m 'First commit'`.
-14. И ещё раз посмотреть выводы команд `git status`, `git diff` и `git diff --staged`.
+1. GitLab. Для [регистрации](https://gitlab.com/users/sign_up)  можно использовать аккаунт Google, GitHub и другие. 
+2. После регистрации или авторизации в GitLab создайте новый проект, нажав на ссылку `Create a projet`. 
+Желательно назвать также, как и в GitHub — `devops-netology` и `visibility level`, выбрать `Public`.
+3. Галочку `Initialize repository with a README` лучше не ставить, чтобы не пришлось разрешать конфликты.
+4. Если вы зарегистрировались при помощи аккаунта в другой системе и не указали пароль, то увидите сообщение:
+`You won't be able to pull or push project code via HTTPS until you set a password on your account`. 
+Тогда перейдите [по ссылке](https://gitlab.com/profile/password/edit) из этого сообщения и задайте пароль. 
+Если вы уже умеете пользоваться SSH-ключами, то воспользуйтесь этой возможностью (подробнее про SSH мы поговорим в следующем учебном блоке).
+5. Перейдите на страницу созданного вами репозитория, URL будет примерно такой:
+https://gitlab.com/YOUR_LOGIN/devops-netology. Изучите предлагаемые варианты для начала работы в репозитории в секции
+`Command line instructions`. 
+6. Запомните вывод команды `git remote -v`.
+7. Из-за того, что это будет наш дополнительный репозиторий, ни один вариант из перечисленных в инструкции (на странице 
+вновь созданного репозитория) нам не подходит. Поэтому добавляем этот репозиторий, как дополнительный `remote`, к созданному
+репозиторию в рамках предыдущего домашнего задания:
+`git remote add gitlab https://gitlab.com/YOUR_LOGIN/devops-netology.git`.
+8. Отправьте изменения в новый удалённый репозиторий `git push -u gitlab main`.
+9. Обратите внимание, как изменился результат работы команды `git remote -v`.
 
-### Создание файлов `.gitignore` и второго коммита
+#### Как изменить видимость репозитория в  GitLab — сделать его публичным 
 
-1. Создайте файл `.gitignore` (обратите внимание на точку в начале файла), проверьте его статус сразу после создания. 
-1. Добавьте файл `.gitignore` в следующий коммит (`git add...`).
-1. На одном из следующих блоков вы будете изучать `Terraform`, давайте сразу создадим соотвествующий каталог `terraform` и внутри этого каталога — файл `.gitignore` по примеру: https://github.com/github/gitignore/blob/master/Terraform.gitignore.  
-1. В файле `README.md` опишите своими словами, какие файлы будут проигнорированы в будущем благодаря добавленному `.gitignore`.
-1. Закоммитьте все новые и изменённые файлы. Комментарий к коммиту должен быть `Added gitignore`.
+* На верхней панели выберите «Меню» -> «Проекты» и найдите свой проект.
+* На левой боковой панели выберите «Настройки» -> «Основные».
+* Разверните раздел «Видимость» -> «Функции проекта» -> «Разрешения».
+* Измените видимость проекта на Public.
+* Нажмите «Сохранить изменения».
 
-### Эксперимент с удалением и перемещением файлов (третий и четвёртый коммит)
+### Ответ
+```bash
+$ git remote -v
+origin  https://gitlab.com/udjin79/devops-netology.git (fetch)
+origin  https://gitlab.com/udjin79/devops-netology.git (push)
 
-1. Создайте файлы `will_be_deleted.txt` (с текстом `will_be_deleted`) и `will_be_moved.txt` (с текстом `will_be_moved`) и закоммите их с комментарием `Prepare to delete and move`.
-1. В случае необходимости обратитесь к [официальной документации](https://git-scm.com/book/ru/v2/Основы-Git-Запись-изменений-в-репозиторий) — здесь подробно описано, как выполнить следующие шаги. 
-1. Удалите файл `will_be_deleted.txt` с диска и из репозитория. 
-1. Переименуйте (переместите) файл `will_be_moved.txt` на диске и в репозитории, чтобы он стал называться `has_been_moved.txt`.
-1. Закоммитьте результат работы с комментарием `Moved and deleted`.
+$ git push -u gitlab main
+Username for 'https://gitlab.com': udjin79@gmail.com
+Password for 'https://udjin79@gmail.com@gitlab.com':
+Enumerating objects: 17, done.
+Counting objects: 100% (17/17), done.
+Delta compression using up to 6 threads
+Compressing objects: 100% (9/9), done.
+Writing objects: 100% (17/17), 2.03 KiB | 83.00 KiB/s, done.
+Total 17 (delta 2), reused 3 (delta 0), pack-reused 0
+To https://gitlab.com/udjin79/devops-netology.git
+ * [new branch]      main -> main
+Branch 'main' set up to track remote branch 'main' from 'gitlab'.
 
-### Проверка изменения
+$ git remote -v
+gitlab  https://gitlab.com/udjin79/devops-netology.git (fetch)
+gitlab  https://gitlab.com/udjin79/devops-netology.git (push)
+origin  https://github.com/Udjin79/devops-netology.git (fetch)
+origin  https://github.com/Udjin79/devops-netology.git (push)
+```
 
-1. В результате предыдущих шагов в репозитории должно быть как минимум пять коммитов (если вы сделали ещё промежуточные — нет проблем):
-    * `Initial Commit` — созданный GitHub при инициализации репозитория. 
-    * `First commit` — созданный после изменения файла `README.md`.
-    * `Added gitignore` — после добавления `.gitignore`.
-    * `Prepare to delete and move` — после добавления двух временных файлов.
-    * `Moved and deleted` — после удаления и перемещения временных файлов. 
-2. Проверьте это, используя комманду `git log`. Подробно о формате вывода этой команды мы поговорим на следующем занятии, но посмотреть, что она отображает, можно уже сейчас.
+---
 
-### Отправка изменений в репозиторий
+### Задание 2
 
-Выполните команду `git push`, если Git запросит логин и пароль — введите ваши логин и пароль от GitHub. 
+Представьте ситуацию, когда в коде была обнаружена ошибка — надо вернуться на предыдущую версию кода,
+исправить её и выложить исправленный код в продакшн. Мы никуда не будем выкладывать код, но пометим некоторые коммиты тегами и создадим от них ветки. 
 
-В качестве результата отправьте ссылку на репозиторий. 
-
+1. Создайте легковестный тег `v0.0` на HEAD-коммите и запуште его во все три добавленных на предыдущем этапе `upstream`.
+2. Аналогично создайте аннотированный тег `v0.1`.
+3. Перейдите на страницу просмотра тегов в GitHab (и в других репозиториях) и посмотрите, чем отличаются созданные теги. 
+    * в GitHub — https://github.com/YOUR_ACCOUNT/devops-netology/releases;
+    * в GitLab — https://gitlab.com/YOUR_ACCOUNT/devops-netology/-/tags;
+    * в Bitbucket — список тегов расположен в выпадающем меню веток на отдельной вкладке. 
 
 ### Ответ
 
-https://github.com/Udjin79/devops-netology/commits/main/
+```bash
+$ git tag v0.0
+$ git tag -a v0.1 -m "Annotated tag"
+$ git remote -v
+gitlab  https://gitlab.com/udjin79/devops-netology.git (fetch)
+gitlab  https://gitlab.com/udjin79/devops-netology.git (push)
+origin  https://github.com/Udjin79/devops-netology.git (fetch)
+origin  https://github.com/Udjin79/devops-netology.git (push)
+$ git push gitlab v0.0
+Username for 'https://gitlab.com': udjin79@gmail.com
+Password for 'https://udjin79@gmail.com@gitlab.com':
+Total 0 (delta 0), reused 0 (delta 0), pack-reused 0
+To https://gitlab.com/udjin79/devops-netology.git
+ * [new tag]         v0.0 -> v0.0
+$ git push gitlab v0.1
+Username for 'https://gitlab.com': udjin79@gmail.com
+Password for 'https://udjin79@gmail.com@gitlab.com':
+Enumerating objects: 1, done.
+Counting objects: 100% (1/1), done.
+Writing objects: 100% (1/1), 170 bytes | 15.00 KiB/s, done.
+Total 1 (delta 0), reused 0 (delta 0), pack-reused 0
+To https://gitlab.com/udjin79/devops-netology.git
+ * [new tag]         v0.1 -> v0.1
+
+$ git remote -v
+gitlab  https://gitlab.com/udjin79/devops-netology.git (fetch)
+gitlab  https://gitlab.com/udjin79/devops-netology.git (push)
+origin  https://github.com/Udjin79/devops-netology.git (fetch)
+origin  https://github.com/Udjin79/devops-netology.git (push)
+$ git push origin v0.0
+Total 0 (delta 0), reused 0 (delta 0), pack-reused 0 (from 0)
+To https://github.com/Udjin79/devops-netology.git
+ * [new tag]         v0.0 -> v0.0
+$ git push origin v0.1
+Enumerating objects: 1, done.
+Counting objects: 100% (1/1), done.
+Writing objects: 100% (1/1), 170 bytes | 170.00 KiB/s, done.
+Total 1 (delta 0), reused 0 (delta 0), pack-reused 0 (from 0)
+To https://github.com/Udjin79/devops-netology.git
+ * [new tag]         v0.1 -> v0.1
+$
+```
+
+![Название скриншота 1](https://github.com/Udjin79/netology_hw/blob/main/img/git2_1.png?raw=true)
+![Название скриншота 2](https://github.com/Udjin79/netology_hw/blob/main/img/git2_2.png?raw=true)
+
+
+---
+
+### Задание 3
+
+Давайте посмотрим, как будет выглядеть история коммитов при создании веток. 
+
+1. Переключитесь обратно на ветку `main`, которая должна быть связана с веткой `main` репозитория на `github`.
+2. Посмотрите лог коммитов и найдите хеш коммита с названием `Prepare to delete and move`, который был создан в пределах предыдущего домашнего задания. 
+3. Выполните `git checkout` по хешу найденного коммита. 
+4. Создайте новую ветку `fix`, базируясь на этом коммите `git switch -c fix`.
+5. Отправьте новую ветку в репозиторий на GitHub `git push -u origin fix`.
+6. Посмотрите, как визуально выглядит ваша схема коммитов: https://github.com/YOUR_ACCOUNT/devops-netology/network. 
+7. Теперь измените содержание файла `README.md`, добавив новую строчку.
+8. Отправьте изменения в репозиторий и посмотрите, как изменится схема на странице https://github.com/YOUR_ACCOUNT/devops-netology/network 
+и как изменится вывод команды `git log`.
+
+### Ответ
 
 ```bash
-$ git clone https://github.com/Udjin79/devops-netology.git
-Cloning into 'devops-netology'...
-remote: Enumerating objects: 3, done.
-remote: Counting objects: 100% (3/3), done.
-remote: Total 3 (delta 0), reused 0 (delta 0), pack-reused 0
-Receiving objects: 100% (3/3), done.
+$ git checkout main
+Already on 'main'
+Your branch is up to date with 'gitlab/main'.
 
-$ cd devops-netology/
-$ git config user.name "Evgeniy Isaenkov"
-$ git config user.email johndoe@example.com
-$ git status
-On branch main
-Your branch is up to date with 'origin/main'.
-
-nothing to commit, working tree clean
-
-$ git status
-On branch main
-Your branch is up to date with 'origin/main'.
-
-Changes not staged for commit:
-  (use "git add <file>..." to update what will be committed)
-  (use "git restore <file>..." to discard changes in working directory)
-        modified:   README.md
-
-no changes added to commit (use "git add" and/or "git commit -a")
-
-$ git diff
-diff --git a/README.md b/README.md
-index 647b370..922eccf 100644
---- a/README.md
-+++ b/README.md
-@@ -1 +1,2 @@
--# devops-netology
-\ No newline at end of file
-+# devops-netology^M
-+### Change 1
-\ No newline at end of file
-
-$ git diff --staged
-$ git add README.md
-$ git diff
-$ git diff --staged
-diff --git a/README.md b/README.md
-index 647b370..922eccf 100644
---- a/README.md
-+++ b/README.md
-@@ -1 +1,2 @@
--# devops-netology
-\ No newline at end of file
-+# devops-netology^M
-+### Change 1
-\ No newline at end of file
-
-$ git commit -m 'First commit'
-[main b057920] First commit
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-$ git status
-On branch main
-Your branch is ahead of 'origin/main' by 1 commit.
-  (use "git push" to publish your local commits)
-
-nothing to commit, working tree clean
-
-$ git diff
-$ git diff --staged
-$ touch .gitignore
-$ git add .gitignore
-$ mkdir terraform
-$ touch terraform/.gitignore
-$ git add terraform/.gitignore
-$ git add README.md
-$ git commit -m 'Added gitignore'
-[main dbeb6fb] Added gitignore
- 3 files changed, 3 insertions(+), 1 deletion(-)
- create mode 100644 .gitignore
- create mode 100644 terraform/.gitignore
-
-$ echo "will_be_deleted" >> will_be_deleted.txt
-$ echo "will_be_moved" >> will_be_moved.txt
-$ ls
-README.md  terraform  will_be_deleted.txt  will_be_moved.txt
-$ git add will_be_deleted.txt
-$ git add will_be_moved.txt
-$ git commit -m 'Prepare to delete and move'
-[main bcf5e2f] Prepare to delete and move
- 2 files changed, 2 insertions(+)
- create mode 100644 will_be_deleted.txt
- create mode 100644 will_be_moved.txt
-
-$ rm will_be_deleted.txt
-$ mv will_be_moved.txt has_been_moved.txt
-$ ls
-README.md  has_been_moved.txt  terraform
-$ git add .
-$ git commit -m 'Moved and deleted'
-[main 52a9a0c] Moved and deleted
- 2 files changed, 1 deletion(-)
- rename will_be_moved.txt => has_been_moved.txt (100%)
- delete mode 100644 will_be_deleted.txt
-$ git log
-commit 52a9a0c362d8012f7e1371d312d1f418f957d47f (HEAD -> main)
-Author: Evgeniy Isaenkov <johndoe@example.com>
-Date:   Sat Mar 23 17:00:17 2024 +0300
-
-    Moved and deleted
-
+$ git log --grep="Prepare to delete and move"
 commit bcf5e2fd8e3cc3e8c99a8d7d8e611ed8e1d881e9
 Author: Evgeniy Isaenkov <johndoe@example.com>
 Date:   Sat Mar 23 16:55:51 2024 +0300
 
     Prepare to delete and move
 
-commit dbeb6fb1248f9a68bef494411be197ac64369901 (origin/main, origin/HEAD)
-Author: Evgeniy Isaenkov <johndoe@example.com>
-Date:   Sat Mar 23 16:44:41 2024 +0300
+$ git checkout bcf5e2fd8e3cc3e8c99a8d7d8e611ed8e1d881e9
+Note: switching to 'bcf5e2fd8e3cc3e8c99a8d7d8e611ed8e1d881e9'.
+HEAD is now at bcf5e2f Prepare to delete and move
 
-    Added gitignore
+$ git switch -c fix
+Switched to a new branch 'fix'
 
-commit b057920f3f715c119ab529bf22fa4c4846bfaf23
-Author: Evgeniy Isaenkov <johndoe@example.com>
-Date:   Sat Mar 23 16:39:15 2024 +0300
+$ git push -u origin fix
+Total 0 (delta 0), reused 0 (delta 0), pack-reused 0 (from 0)
+remote:
+remote: Create a pull request for 'fix' on GitHub by visiting:
+remote:      https://github.com/Udjin79/devops-netology/pull/new/fix
+remote:
+To https://github.com/Udjin79/devops-netology.git
+ * [new branch]      fix -> fix
+branch 'fix' set up to track 'origin/fix'.
 
-    First commit
+$ git add README.md
 
-commit 6c34c5ba393d22b7b20cb62510f4f95540a2c8cb
-Author: Evgeniy <68610242+Udjin79@users.noreply.github.com>
-Date:   Sat Mar 23 16:14:45 2024 +0300
+$ git commit -m "Update README.md"
+[fix 65c508a] Update README.md
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-    Initial commit
-
+$ git push
+Enumerating objects: 5, done.
+Counting objects: 100% (5/5), done.
+Delta compression using up to 6 threads
+Compressing objects: 100% (3/3), done.
+Writing objects: 100% (3/3), 363 bytes | 363.00 KiB/s, done.
+Total 3 (delta 1), reused 0 (delta 0), pack-reused 0 (from 0)
+remote: Resolving deltas: 100% (1/1), completed with 1 local object.
+To https://github.com/Udjin79/devops-netology.git
+   bcf5e2f..65c508a  fix -> fix
 ```
+
+![Название скриншота 3](https://github.com/Udjin79/netology_hw/blob/main/img/git2_3.png?raw=true)
+![Название скриншота 4](https://github.com/Udjin79/netology_hw/blob/main/img/git2_4.png?raw=true)
+
+---
+
+### Задание 4
+
+Попробуем поработь с Git при помощи визуального редактора. 
+
+1. В используемой IDE PyCharm откройте визуальный редактор работы с Git, находящийся в меню View -> Tool Windows -> Git.
+2. Измените какой-нибудь файл, и он сразу появится на вкладке `Local Changes`, отсюда можно выполнить коммит, нажав на кнопку внизу этого диалога. 
+3. Элементы управления для работы с Git будут выглядеть примерно так:
+ 
+4. Попробуйте выполнить пару коммитов, используя IDE. 
+
+[По ссылке](https://www.jetbrains.com/help/pycharm/commit-and-push-changes.html) можно найти справочную информацию по визуальному интерфейсу. 
+
+Если вверху экрана выбрать свою операционную систему, можно посмотреть горячие клавиши для работы с Git. 
+Подробней о визуальном интерфейсе мы расскажем на одной из следующих лекций.
+
+*В качестве результата работы по всем заданиям приложите ссылки на ваши репозитории в GitHub, GitLab и Bitbucket*.  
+
+### Ответ
+
+![Название скриншота 5](https://github.com/Udjin79/netology_hw/blob/main/img/git2_5.png?raw=true)
+![Название скриншота 6](https://github.com/Udjin79/netology_hw/blob/main/img/git2_6.png?raw=true)
+
