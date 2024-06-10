@@ -1,0 +1,18 @@
+- name: Run Grafana in Docker
+  hosts: grafana_hosts
+  become: yes
+  tasks:
+    - name: Pull Grafana Enterprise Docker image
+      docker_image:
+        name: grafana/grafana-enterprise
+        source: pull
+
+    - name: Run Grafana container
+      docker_container:
+        name: grafana
+        image: grafana/grafana-enterprise
+        state: started
+        restart_policy: always
+        ports:
+          - "3000:3000"
+        container_default_behavior: compatibility

@@ -1,0 +1,54 @@
+---
+- name: Install Docker on specified hosts
+  hosts: prometheus_hosts, grafana_hosts, elasticsearch_hosts, kibana_hosts, web_servers_hosts
+  become: yes
+
+  tasks:
+    - name: Update the apt package index
+      apt:
+        update_cache: yes
+
+    - name: Install packages to allow apt to use a repository over HTTPS
+      apt:
+        name:
+          - apt-transport-https
+          - ca-certificates
+          - curl
+          - gnupg2
+          - software-properties-common
+        state: present
+
+    - name: Add Docker's official GPG key
+      apt_key:
+        url: https://download.docker.com/linux/debian/gpg
+        state: present
+
+    - name: Set up the Docker stable repository
+      apt_repository:
+        repo: "deb [arch=amd64] https://download.docker.com/linux/debian {{ ansible_distribution_release }} stable"
+        state: present
+
+    - name: Update the apt package index again
+      apt:
+        update_cache: yes
+
+    - name: Install the latest version of Docker CE
+      apt:
+        name: docker-ce
+        state: present
+
+    - name: Ensure Docker is running
+      systemd:
+        name: docker
+        state: started
+        enabled: yes
+
+    - name: Ensure Python pip is installed
+      apt:
+        name: python3-pip
+        state: present
+
+    - name: Install Docker SDK for Python
+      pip:
+        name: docker
+        state: present

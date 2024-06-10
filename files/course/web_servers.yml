@@ -1,0 +1,214 @@
+- name: Configure web servers
+  hosts: web_servers_hosts
+  become: True
+  tasks:
+    - name: Ensure nginx is installed
+      apt:
+        name: nginx
+        state: present
+
+    - name: Create static file with VM name and additional text
+      shell: |
+        echo "<html>" > /var/www/html/index.html
+        echo "<head><title>{{ inventory_hostname }}</title></head>" >> /var/www/html/index.html
+        echo "<body>" >> /var/www/html/index.html
+        echo "<h1>{{ inventory_hostname }}</h1>" >> /var/www/html/index.html
+        echo "<p>This is a web server hosted on {{ inventory_hostname }}.</p>" >> /var/www/html/index.html
+        echo "</body>" >> /var/www/html/index.html
+        echo "</html>" >> /var/www/html/index.html
+
+    - name: Copy nginx.conf from local to remote
+      copy:
+        src: ./configs/nginx/nginx.conf
+        dest: /etc/nginx/nginx.conf
+        owner: root
+        group: root
+        mode: '0644'
+
+    - name: Ensure nginx service is stopped
+      systemd:
+        name: nginx
+        state: stopped
+
+    - name: Enable nginx service
+      systemd:
+        name: nginx
+        enabled: True
+
+    - name: Start nginx service
+      systemd:
+        name: nginx
+        state: started
+
+    - name: Download Node Exporter
+      get_url:
+        url: https://github.com/prometheus/node_exporter/releases/download/v1.8.1/node_exporter-1.8.1.linux-amd64.tar.gz
+        dest: /tmp/node_exporter-1.8.1.linux-amd64.tar.gz
+
+    - name: Extract Node Exporter
+      unarchive:
+        src: /tmp/node_exporter-1.8.1.linux-amd64.tar.gz
+        dest: /tmp/
+        remote_src: True
+
+    - name: Move Node Exporter binary
+      command: mv /tmp/node_exporter-1.8.1.linux-amd64/node_exporter /usr/local/bin/node_exporter
+      args:
+        creates: /usr/local/bin/node_exporter
+
+    - name: Create Node Exporter user
+      user:
+        name: node_exporter
+        system: True
+        shell: /bin/false
+
+    - name: Create Node Exporter service file
+      copy:
+        content: |
+          [Unit]
+          Description=Node Exporter
+          After=network.target
+
+          [Service]
+          User=node_exporter
+          Group=node_exporter
+          Type=simple
+          ExecStart=/usr/local/bin/node_exporter
+
+          [Install]
+          WantedBy=multi-user.target
+        dest: /etc/systemd/system/node_exporter.service
+        mode: '0644'
+
+    - name: Enable Node Exporter service
+      systemd:
+        name: node_exporter
+        enabled: True
+
+    - name: Start Node Exporter service
+      systemd:
+        name: node_exporter
+        state: started
+
+    - name: Download Prometheus Nginx Log Exporter binary
+      get_url:
+        url: https://github.com/martin-helmich/prometheus-nginxlog-exporter/releases/download/v1.11.0/prometheus-nginxlog-exporter_1.11.0_linux_amd64.tar.gz
+        dest: /tmp/prometheus-nginxlog-exporter_1.11.0_linux_amd64.tar.gz
+
+    - name: Extract Prometheus Nginx Log Exporter binary
+      unarchive:
+        src: /tmp/prometheus-nginxlog-exporter_1.11.0_linux_amd64.tar.gz
+        dest: /usr/local/bin/
+        remote_src: True
+
+    - name: Create Prometheus Nginx Log Exporter service file
+      copy:
+        content: |
+          [Unit]
+          Description=Prometheus Nginxlog Exporter
+          After=network.target
+
+          [Service]
+          ExecStart=/usr/local/bin/prometheus-nginxlog-exporter -config-file /etc/prometheus-nginxlog-exporter.hcl
+          Restart=always
+
+          [Install]
+          WantedBy=multi-user.target
+        dest: /etc/systemd/system/prometheus-nginxlog-exporter.service
+
+    - name: Ensure Prometheus Nginx Log Exporter configuration file exists
+      copy:
+        content: |
+          listen {
+            port = 4040
+          }
+
+          namespace "nginx" {
+            source = {
+              files = [
+                "/var/log/nginx/access.log"
+              ]
+            }
+
+            format = "$remote_addr - $remote_user [$time_local] \"$request\" $status $body_bytes_sent \"$http_referer\" \"$http_user_agent\" \"$http_x_forwarded_for\""
+
+            labels {
+              app = "nginx"
+            }
+          }
+        dest: /etc/prometheus-nginxlog-exporter.hcl
+        mode: 0644
+
+    - name: Ensure Prometheus Nginx Log Exporter service is stopped
+      systemd:
+        name: prometheus-nginxlog-exporter
+        state: stopped
+
+    - name: Enable Prometheus Nginx Log Exporter service
+      systemd:
+        name: prometheus-nginxlog-exporter
+        enabled: True
+
+    - name: Start Prometheus Nginx Log Exporter service
+      systemd:
+        name: prometheus-nginxlog-exporter
+        state: started
+
+    - name: Ensure Filebeat service is stopped
+      systemd:
+        name: filebeat
+        state: stopped
+
+    - name: Copy Filebeat tar.gz to the server
+      copy:
+        src: ./distrib/filebeat-7.14.0-linux-x86_64.tar.gz
+        dest: /tmp/filebeat-7.14.0-linux-x86_64.tar.gz
+
+    - name: Extract Filebeat
+      unarchive:
+        src: /tmp/filebeat-7.14.0-linux-x86_64.tar.gz
+        dest: /opt/
+        remote_src: yes
+
+    - name: Create a symlink for Filebeat
+      file:
+        src: /opt/filebeat-7.14.0-linux-x86_64/filebeat
+        dest: /usr/bin/filebeat
+        state: link
+
+    - name: Copy Filebeat configuration file
+      copy:
+        src: ./filebeat.yml
+        dest: /opt/filebeat-7.14.0-linux-x86_64/filebeat.yml
+        owner: root
+        group: root
+        mode: '0644'
+
+    - name: Create Filebeat systemd service file
+      copy:
+        content: |
+          [Unit]
+          Description=Filebeat sends log files to Logstash or directly to Elasticsearch.
+          Documentation=https://www.elastic.co/beats/filebeat
+          Wants=network-online.target
+          After=network-online.target
+
+          [Service]
+          ExecStart=/opt/filebeat-7.14.0-linux-x86_64/filebeat -e -c /opt/filebeat-7.14.0-linux-x86_64/filebeat.yml
+          Restart=always
+
+          [Install]
+          WantedBy=multi-user.target
+        dest: /etc/systemd/system/filebeat.service
+        owner: root
+        group: root
+        mode: '0644'
+
+    - name: Reload systemd
+      command: systemctl daemon-reload
+
+    - name: Enable and start Filebeat service
+      service:
+        name: filebeat
+        state: started
+        enabled: true

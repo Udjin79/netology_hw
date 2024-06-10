@@ -1,0 +1,26 @@
+---
+- name: Deploy Kibana with Docker
+  hosts: kibana_hosts
+  become: yes
+  tasks:
+    - name: Ensure Docker is installed
+      apt:
+        name: docker.io
+        state: present
+
+    - name: Pull Kibana Docker image
+      docker_image:
+        name: kibana
+        tag: 7.14.0
+        source: pull
+
+    - name: Run Kibana container
+      docker_container:
+        name: kibana
+        image: kibana:7.14.0
+        volumes:
+          - ./configs/kibana.yml:/usr/share/kibana/config/kibana.yml:ro
+        ports:
+          - "5601:5601"
+        state: started
+        restart_policy: always

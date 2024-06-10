@@ -1,0 +1,26 @@
+- hosts: prometheus_hosts
+  become: yes
+  tasks:
+    - name: Install Prometheus
+      apt:
+        name: prometheus
+        state: present
+
+    - name: Copy Prometheus config from local to remote
+      copy:
+        src: ./configs/prometheus/prometheus.yml
+        dest: /etc/prometheus/prometheus.yml
+        owner: root
+        group: root
+        mode: '0644'
+
+    - name: Ensure Prometheus service is stopped
+      systemd:
+        name: prometheus
+        state: stopped
+
+    - name: Start and enable Prometheus
+      systemd:
+        name: prometheus
+        enabled: yes
+        state: started

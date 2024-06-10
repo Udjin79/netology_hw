@@ -1,0 +1,32 @@
+---
+- name: Deploy Elasticsearch with Docker
+  hosts: elasicsearch_hosts
+  become: yes
+  tasks:
+    - name: Ensure Docker is installed
+      apt:
+        name: docker.io
+        state: present
+
+    - name: Pull Elasticsearch Docker image
+      docker_image:
+        name: elasticsearch
+        tag: 7.14.0
+        source: pull
+
+    - name: Run Elasticsearch container
+      docker_container:
+        name: elasticsearch
+        image: elasticsearch:7.14.0
+        volumes:
+          - ./config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
+        env:
+          ES_JAVA_OPTS: "-Xmx512m -Xms512m"
+          ELASTIC_USERNAME: "your_elastic_username"
+          ELASTIC_PASSWORD: "your_elastic_password"
+          discovery.type: "single-node"
+        ports:
+          - "9200:9200"
+          - "9300:9300"
+        state: started
+        restart_policy: always
