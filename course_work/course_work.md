@@ -213,7 +213,6 @@ docker run -d \
   - Доступ через 22 порт возможен только через bastion-host
 
 ![10](https://github.com/Udjin79/netology_hw/blob/main/img/course/course_10.png?raw=true)
-![11](https://github.com/Udjin79/netology_hw/blob/main/img/course/course_11.png?raw=true)
 ![13](https://github.com/Udjin79/netology_hw/blob/main/img/course/course_13.png?raw=true)
 ![12](https://github.com/Udjin79/netology_hw/blob/main/img/course/course_12.png?raw=true)
 
