@@ -294,3 +294,29 @@ resource "yandex_compute_instance" "kibana" {
 
   zone = "ru-central1-a"
 }
+
+resource "yandex_compute_snapshot_schedule" "default" {
+  name = "daily_snapshot_schedule"
+
+  schedule_policy {
+    expression = "0 0 * * *"
+  }
+
+  snapshot_count = 7
+
+  snapshot_spec {
+    description = "Daily snapshot"
+    labels = {
+      snapshot_type = "daily"
+    }
+  }
+
+  disk_ids = [
+    yandex_compute_instance.course-vm1.boot_disk.0.disk_id,
+    yandex_compute_instance.course-vm2.boot_disk.0.disk_id,
+    yandex_compute_instance.prometheus.boot_disk.0.disk_id,
+    yandex_compute_instance.grafana.boot_disk.0.disk_id,
+    yandex_compute_instance.elasticsearch.boot_disk.0.disk_id,
+    yandex_compute_instance.kibana.boot_disk.0.disk_id
+  ]
+}
