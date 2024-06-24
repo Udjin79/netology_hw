@@ -45,11 +45,14 @@ $ docker pull nginx:1.21.1
 1.21.1: Pulling from library/nginx
 Status: Downloaded newer image for nginx:1.21.1
 docker.io/library/nginx:1.21.1
+
 $ docker build -t udjin79/nginx_custom:1.0.0 .
 [+] Building 1.6s (6/6) 
+
 $ docker login
 Authenticating with existing credentials...
 Login Succeeded
+
 $ docker push udjin79/nginx_custom:1.0.0
 The push refers to repository [docker.io/udjin79/nginx_custom]
 1.0.0: digest: sha256:340fe62c23fafa756e661d319706620f768821a860aef0c8b2787844cf4ef956 size: 1777
@@ -81,13 +84,17 @@ $ docker run -d -p 8080:80 udjin79/nginx_custom:1.0.0
 ```bash
 $ docker run -d --name evgenii-isaenkov-custom-nginx-t2 -p 127.0.0.1:8080:80 udjin79/nginx_custom:1.0.0
 5a87d0b478b6649a26dde49b2646cf2ff99fa7c8aba507382d7d3cd4f43d1390
+
 $ docker ps -a
 CONTAINER ID   IMAGE                         COMMAND                  CREATED          STATUS                     PORTS                                                 NAMES
 5a87d0b478b6   udjin79/nginx_custom:1.0.0    "/docker-entrypoint.…"   17 seconds ago   Up 16 seconds              127.0.0.1:8080->80/tcp                                evgenii-isaenkov-custom-nginx-t2
+
 $ docker rename evgenii-isaenkov-custom-nginx-t2 custom-nginx-t2
+
 $ docker ps -a
 CONTAINER ID   IMAGE                         COMMAND                  CREATED         STATUS                     PORTS                                                 NAMES
 5a87d0b478b6   udjin79/nginx_custom:1.0.0    "/docker-entrypoint.…"   8 minutes ago   Up 8 minutes               127.0.0.1:8080->80/tcp                                custom-nginx-t2
+
 $ date +"%d-%m-%Y %T.%N %Z" ; sleep 0.150 ; docker ps ; ss -tlpn | grep 127.0.0.1:8080 ; docker logs custom-nginx-t2 -n1 ; docker exec -it custom-nginx-t2 base64 /usr/share/nginx/html/index.html
 24-06-2024 11:38:13.679720367 MSK
 CONTAINER ID   IMAGE                         COMMAND                  CREATED         STATUS                 PORTS                                                 NAMES
@@ -96,6 +103,7 @@ LISTEN 0      4096       127.0.0.1:8080       0.0.0.0:*
 2024/06/24 08:29:01 [notice] 1#1: start worker process 36
 PGh0bWw+PGhlYWQ+SGV5LCBOZXRvbG9neTwvaGVhZD48Ym9keT48aDE+SSB3aWxsIGJlIERldk9w
 cyBFbmdpbmVlciE8L2gxPjwvYm9keT48L2h0bWw+Cg==
+
 $ curl http://127.0.0.1:8080
 <html><head>Hey, Netology</head><body><h1>I will be DevOps Engineer!</h1></body></html>
 ```
@@ -126,25 +134,35 @@ $ docker attach custom-nginx-t2
 ^C
 2024/06/24 08:42:47 [notice] 1#1: signal 2 (SIGINT) received, exiting
 2024/06/24 08:42:47 [notice] 1#1: exit
+
 $ docker ps -a
 CONTAINER ID   IMAGE                         COMMAND                  CREATED          STATUS                      PORTS                                                 NAMES
 5a87d0b478b6   udjin79/nginx_custom:1.0.0    "/docker-entrypoint.…"   13 minutes ago   Exited (0) 10 seconds ago                                                         custom-nginx-t2
+
 $ docker start custom-nginx-t2
 custom-nginx-t2
+
 $ docker exec -it custom-nginx-t2 /bin/bash
+
 root@5a87d0b478b6:/# apt-get update
+
 root@5a87d0b478b6:/# apt-get install -y vim
+
 root@5a87d0b478b6:/# vim /etc/nginx/conf.d/default.conf
+
 root@5a87d0b478b6:/# cat /etc/nginx/conf.d/default.conf
 server {
     listen       81;
     listen  [::]:81;
     server_name  localhost;
+
 root@5a87d0b478b6:/# nginx -s reload
 2024/06/24 08:48:16 [notice] 423#423: signal process started
+
 root@5a87d0b478b6:/# curl http://127.0.0.1:80 ; curl http://127.0.0.1:81
 curl: (7) Failed to connect to 127.0.0.1 port 80: Connection refused
 <html><head>Hey, Netology</head><body><h1>I will be DevOps Engineer!</h1></body></html>
+
 root@5a87d0b478b6:/# exit
 exit
 ```
@@ -155,20 +173,28 @@ exit
 ```bash
 $ ss -tlpn | grep 127.0.0.1:8080
 LISTEN 0      4096       127.0.0.1:8080       0.0.0.0:*
+
 $ docker port custom-nginx-t2
 80/tcp -> 127.0.0.1:8080
+
 $ curl http://127.0.0.1:8080
 curl: (52) Empty reply from server
+
 $ docker stop custom-nginx-t2
 custom-nginx-t2
+
 $ docker commit custom-nginx-t2 custom-nginx-t2:0.0.2
 sha256:d421deb8394acce72db25236b0fbd4f7122ed30f36bc2a26d4d7f188881253bc
+
 $ docker rm custom-nginx-t2
 custom-nginx-t2
+
 $ docker run -d --name custom-nginx-t2 -p 127.0.0.1:8080:81 custom-nginx-t2:0.0.2
 575bcfe48390412ed0c8bc941332e09a140fbfc5241e6542038e5ab37ed9cae1
+
 $ curl http://127.0.0.1:8080
 <html><head>Hey, Netology</head><body><h1>I will be DevOps Engineer!</h1></body></html>
+
 $ docker ps -a
 CONTAINER ID   IMAGE                         COMMAND                  CREATED          STATUS                      PORTS                                                 NAMES
 575bcfe48390   custom-nginx-t2:0.0.2      "/docker-entrypoint.…"   12 minutes ago   Up 5 seconds                80/tcp, 127.0.0.1:8080->81/tcp                        custom-nginx-t2
@@ -195,20 +221,30 @@ CONTAINER ID   IMAGE                         COMMAND                  CREATED   
 ```bash
 $ docker run -d --name centos-container -v $(pwd):/data centos:latest sleep infinity
 c8bcc1eb419ed04f8c0c87116455eb9d650b70a27d24327bff8a74bdc0698950
+
 $ docker run -d --name debian-container -v $(pwd):/data debian:latest sleep infinity
 30ef6647df3d5a2eae771a5ee884a38c7fd616a2e140951c0497694de4ceff13
+
 $ docker exec -it centos-container /bin/bash
+
 [root@c8bcc1eb419e /]# echo "CentOS container test file" > /data/centos_file.txt
+
 [root@c8bcc1eb419e /]# exit
 exit
+
 $ echo "HOST machine test file" > $(pwd)/host_file.txt
+
 $ docker exec -it debian-container /bin/bash
+
 root@30ef6647df3d:/# ls /data
 Dockerfile  centos_file.txt  host_file.txt  index.html
+
 root@30ef6647df3d:/# cat /data/centos_file.txt
 CentOS container test file
+
 root@30ef6647df3d:/# cat /data/host_file.txt
 HOST machine test file
+
 root@30ef6647df3d:/# exit
 exit
 ```
