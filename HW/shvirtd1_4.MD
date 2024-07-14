@@ -74,7 +74,7 @@ $ docker run --name my-app --network my-network -p 5000:5000 -d docker_practice
 Список контейнеров
 
 ```bash
-$ $ docker ps -a
+$ docker ps -a
 CONTAINER ID   IMAGE                         COMMAND                  CREATED          STATUS                        PORTS                                                 NAMES
 e53429827745   docker_practice               "python main.py"         10 minutes ago   Up 10 minutes                 0.0.0.0:5000->5000/tcp                                my-app
 912049e9ab90   mysql:latest                  "docker-entrypoint.s…"   19 minutes ago   Up 19 minutes                 0.0.0.0:3306->3306/tcp, 33060/tcp                     mysql-db
@@ -90,7 +90,7 @@ TIME: 2024-07-14 10:36:04, IP: None
 Проверяю, что корректно работает файл .dockerignore
 
 ```bash
-$ $ cat .dockerignore
+$ cat .dockerignore
 .venv
 venv
 .git
@@ -98,9 +98,9 @@ venv
 
 Сравниваю локальную папку и папку в контейнере. Видим, что папки venv в контейнере нет, соответственно файл работает.
 ```bash
-$ $ ls
+$ ls
 Dockerfile.python  LICENSE  README.md  haproxy  main.py  nginx  proxy.yaml  requirements.txt  schema.pdf  venv
-$ $ docker exec -it my-app bash
+$ docker exec -it my-app bash
 root@e53429827745:/app# ls
 Dockerfile.python  LICENSE  README.md  haproxy  main.py  nginx  proxy.yaml  requirements.txt  schema.pdf
 ```
