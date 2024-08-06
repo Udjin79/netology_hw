@@ -90,17 +90,17 @@ resource "yandex_compute_instance" "web" {
   name  = "web-${count.index + 1}"
 
   resources {
-    cores  = 2
-    memory = 2
+    cores  = var.web_cores
+    memory = var.web_memory
   }
-
+  
   boot_disk {
     initialize_params {
-      image_id = "fd870suu28d40fqp8srr"
-      size     = 20
+      image_id = var.image_id
+      size     = var.web_disk_size
     }
   }
-
+  
   network_interface {
     subnet_id           = yandex_vpc_subnet.develop.id
     nat                 = true
@@ -124,7 +124,7 @@ for_each-vm.tf
 resource "yandex_compute_instance" "db" {
   for_each = { for vm in local.each_vm : vm.vm_name => vm }
 
-  name  = each.value.vm_name
+  name = each.value.vm_name
 
   resources {
     cores  = each.value.cpu
@@ -133,7 +133,7 @@ resource "yandex_compute_instance" "db" {
 
   boot_disk {
     initialize_params {
-      image_id = "fd870suu28d40fqp8srr"
+      image_id = var.image_id
       size     = each.value.disk_volume
     }
   }
@@ -157,19 +157,19 @@ resource "yandex_compute_instance" "db" {
 locals.tf
 ```bash
 locals {
-  ssh_key = file("~/.ssh/id_rsa.pub")
+  ssh_key = file(var.ssh_key_path)
   each_vm = [
     {
-      vm_name     = "main"
-      cpu         = 4
-      ram         = 8
-      disk_volume = 50
+      vm_name     = var.vm_name_main
+      cpu         = var.cpu_main
+      ram         = var.ram_main
+      disk_volume = var.disk_volume_main
     },
     {
-      vm_name     = "replica"
-      cpu         = 2
-      ram         = 4
-      disk_volume = 20
+      vm_name     = var.vm_name_replica
+      cpu         = var.cpu_replica
+      ram         = var.ram_replica
+      disk_volume = var.disk_volume_replica
     }
   ]
 }
@@ -215,34 +215,36 @@ $ yc compute instance list
 disk_vm.tf
 ```bash
 resource "yandex_compute_disk" "disk" {
-  count   = 3
+  count = 3
   name  = "disk-${count.index + 1}"
-  size  = 1
+  size  = var.storage_disk_size
 }
 
 resource "yandex_compute_instance" "storage" {
   name = "storage"
+
   resources {
-        cores           = 2
-        memory          = 1
-        core_fraction = 5
+    cores         = var.storage_cores
+    memory        = var.storage_memory
+    core_fraction = var.storage_core_fraction
   }
 
   boot_disk {
-        initialize_params {
-        image_id = "fd8g64rcu9fq5kpfqls0"
-        }
+    initialize_params {
+      image_id = var.storage_image_id
+    }
   }
 
   dynamic "secondary_disk" {
-   for_each = yandex_compute_disk.disk.*.id
-   content {
-        disk_id = yandex_compute_disk.disk[secondary_disk.key].id
-   }
+    for_each = yandex_compute_disk.disk
+    content {
+      disk_id = secondary_disk.value.id
+    }
   }
+
   network_interface {
-        subnet_id = yandex_vpc_subnet.develop.id
-        nat     = true
+    subnet_id = yandex_vpc_subnet.develop.id
+    nat       = true
   }
 
   metadata = var.metadata
