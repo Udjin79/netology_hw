@@ -1,0 +1,119 @@
+---
+- name: Install Clickhouse
+  hosts: clickhouse
+  remote_user: centos
+  become: true
+  handlers:
+    - name: Start clickhouse service
+      become: true
+      ansible.builtin.service:
+        name: clickhouse-server
+        state: restarted
+  tasks:
+    - name: Mess with clickhouse distrib
+      block:
+        - name: Get clickhouse distrib
+          ansible.builtin.get_url:
+            url: "https://packages.clickhouse.com/rpm/stable/{{ item }}-{{ clickhouse_version }}.x86_64.rpm"
+            dest: "./{{ item }}-{{ clickhouse_version }}.rpm"
+            mode: "0644"
+          with_items: "{{ clickhouse_packages }}"
+      rescue:
+        - name: Get clickhouse distrib (rescue)
+          ansible.builtin.get_url:
+            url: "https://packages.clickhouse.com/rpm/stable/clickhouse-common-static-{{ clickhouse_version }}.x86_64.rpm"
+            dest: "./clickhouse-common-static-{{ clickhouse_version }}.rpm"
+            mode: "0644"
+    - name: Install clickhouse packages
+      become: true
+      ansible.builtin.dnf:
+        name:
+          - "/home/centos/clickhouse-common-static-{{ clickhouse_version }}.rpm"
+          - "/home/centos/clickhouse-client-{{ clickhouse_version }}.rpm"
+          - "/home/centos/clickhouse-server-{{ clickhouse_version }}.rpm"
+        disable_gpg_check: true
+      notify: Start clickhouse service
+    - name: Flush handlers
+      ansible.builtin.meta: flush_handlers
+    - name: Create database
+      ansible.builtin.command: "clickhouse-client -q 'create database logs;'"
+      register: create_db
+      failed_when: create_db.rc != 0 and create_db.rc != 82
+      changed_when: create_db.rc == 0
+    - name: Install required packages
+      ansible.builtin.dnf:
+        name:
+          - unzip
+          - curl
+        state: present
+- name: Install and configure Vector
+  hosts: vector
+  remote_user: centos
+  become: true
+  handlers:
+    - name: Restart vector service
+      become: true
+      ansible.builtin.systemd:
+        name: vector
+        state: restarted
+  tasks:
+    - name: Download Vector distribution
+      ansible.builtin.get_url:
+        url: "https://packages.timber.io/vector/0.40.0/vector-{{ vector_version }}.x86_64.rpm"
+        dest: "./vector-{{ vector_version }}.rpm"
+        mode: "0644"
+    - name: Install Vector
+      become: true
+      ansible.builtin.dnf:
+        name: "./vector-{{ vector_version }}.rpm"
+        state: present
+        disable_gpg_check: true
+    - name: Deploy Vector configuration
+      ansible.builtin.template:
+        src: vector.j2
+        dest: "/etc/vector/vector.toml"
+        mode: '0644'
+      notify: Restart vector service
+- name: Install and configure LightHouse
+  hosts: lighthouse
+  remote_user: centos
+  become: true
+  handlers:
+    - name: Restart nginx service
+      become: true
+      ansible.builtin.systemd:
+        name: nginx
+        state: restarted
+  tasks:
+    - name: Install required packages
+      ansible.builtin.dnf:
+        name: git
+        state: present
+    - name: Clone LightHouse repository
+      ansible.builtin.git:
+        repo: 'https://github.com/VKCOM/lighthouse.git'
+        dest: '/var/www/lighthouse'
+        version: master
+    - name: Ensure permissions on LightHouse directory
+      ansible.builtin.file:
+        path: '/var/www/lighthouse'
+        state: directory
+        mode: '0755'
+    - name: Install EPEL repo
+      ansible.builtin.dnf:
+        name: epel-release
+        state: present
+    - name: Install Nginx
+      ansible.builtin.dnf:
+        name: nginx
+        state: present
+    - name: Deploy Nginx configuration for LightHouse
+      ansible.builtin.template:
+        src: nginx_lighthouse.j2
+        dest: "/etc/nginx/conf.d/lighthouse.conf"
+        mode: '0644'
+      notify: Restart nginx service
+    - name: Ensure Nginx is running
+      ansible.builtin.systemd:
+        name: nginx
+        state: started

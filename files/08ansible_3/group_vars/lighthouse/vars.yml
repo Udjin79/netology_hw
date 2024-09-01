@@ -1,0 +1,2 @@
+lighthouse_nginx_port: 80
+lighthouse_data_dir: /var/www/lighthouse/data
