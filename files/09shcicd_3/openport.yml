@@ -1,0 +1,20 @@
+---
+- name: Install firewalld
+  hosts: sonarqube
+  become: true
+  tasks:
+    - name: Install
+      ansible.builtin.yum:
+        name: firewalld
+        state: present
+    - name: Start firewalld
+      ansible.builtin.service:
+        name: firewalld
+        state: started
+        enabled: true
+    - name: Enable 9000
+      ansible.posix.firewalld:
+        zone: public
+        port: 9000/tcp
+        permanent: true
+        state: enabled
