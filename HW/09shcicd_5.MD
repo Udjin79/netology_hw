@@ -101,15 +101,18 @@ nexus-01                   : ok=16   changed=0    unreachable=0    failed=0    s
 
 5. Сделайте fork [репозитория](https://github.com/aragastmatb/example-teamcity).
 
-![Название скриншота 8](https://github.com/Udjin79/netology_hw/blob/main/img/09shcicd5_8.png?raw=true)
-![Название скриншота 1](https://github.com/Udjin79/netology_hw/blob/main/img/09shcicd5_1.png?raw=true)
+Сделан форк репозитория https://github.com/Udjin79/example-teamcity
 
 ### Основная часть
 
 1. Создайте новый проект в teamcity на основе fork.
 
-Сделан форк репозитория https://github.com/Udjin79/example-teamcity
-Произвведена настройка проекта в TeamCity
+Произведена настройка проекта в TeamCity
+
+![Название скриншота 8](https://github.com/Udjin79/netology_hw/blob/main/img/09shcicd5_8.png?raw=true)
+
+![Название скриншота 1](https://github.com/Udjin79/netology_hw/blob/main/img/09shcicd5_1.png?raw=true)
+
 ![Название скриншота 2](https://github.com/Udjin79/netology_hw/blob/main/img/09shcicd5_2.png?raw=true)
 
 2. Сделайте autodetect конфигурации.
@@ -137,6 +140,7 @@ nexus-01                   : ok=16   changed=0    unreachable=0    failed=0    s
 7. Запустите сборку по master, убедитесь, что всё прошло успешно и артефакт появился в nexus.
 
 ![Название скриншота 6](https://github.com/Udjin79/netology_hw/blob/main/img/09shcicd5_6.png?raw=true)
+
 ![Название скриншота 7](https://github.com/Udjin79/netology_hw/blob/main/img/09shcicd5_7.png?raw=true)
 
 8. Мигрируйте `build configuration` в репозиторий.
@@ -185,6 +189,7 @@ nexus-01                   : ok=16   changed=0    unreachable=0    failed=0    s
 17. Проведите повторную сборку мастера, убедитесь, что сбора прошла успешно и артефакты собраны.
 
 ![Название скриншота 12](https://github.com/Udjin79/netology_hw/blob/main/img/09shcicd5_12.png?raw=true)
+
 ![Название скриншота 13](https://github.com/Udjin79/netology_hw/blob/main/img/09shcicd5_13.png?raw=true)
 
 18. Проверьте, что конфигурация в репозитории содержит все настройки конфигурации из teamcity.
