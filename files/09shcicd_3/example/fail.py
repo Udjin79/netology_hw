@@ -12,7 +12,6 @@ def get_square(numb):
 
 def print_numb(numb):
     print("Number is {}".format(numb))
-    pass
 
 
 while (index < 10):
