@@ -1,0 +1,17 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Checkout') {
+            steps {
+                git branch: 'main', url: 'https://github.com/Udjin79/netology_hw.git'
+            }
+        }
+
+        stage('Molecule Test') {
+            steps {
+                sh 'molecule test'
+            }
+        }
+    }
+}
