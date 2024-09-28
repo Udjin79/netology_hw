@@ -71,6 +71,7 @@ WARN[0000] /mnt/h/DevOps/mnt-homeworks/10-monitoring-03-grafana/docker-compose.y
 
 CPULA 1/5/15
 ```bash
+node_load1{instance="nodeexporter:9100", job="nodeexporter"}
 node_load5{instance="nodeexporter:9100", job="nodeexporter"}
 node_load15{instance="nodeexporter:9100", job="nodeexporter"}
 ```
