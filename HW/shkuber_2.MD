@@ -123,7 +123,6 @@ spec:
     port: 80
     targetPort: 8080
 
-```bash
 $ kubectl apply -f netology-web-pod.yaml
 pod/netology-web created
 
