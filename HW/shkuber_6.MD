@@ -106,17 +106,14 @@ multitool-daemonset-4cgs4   1/1     Running   0          19s
 ```bash
 $ POD_NAME=$(kubectl get pods -l app=multitool-daemonset -o jsonpath="{.items[0].metadata.name}")
 kubectl exec -it $POD_NAME -- sh
-/ # cat /var/log/syslog
-Nov 25 20:15:09 Brix systemd[1]: run-containerd-runc-k8s.io-9af3d672e4c8.mount: Deactivated successfully.
-Nov 25 20:15:10 Brix systemd[1]: 1cf4a89b25de-run.woHWw.mount: Deactivated successfully.
-Nov 25 20:15:11 Brix systemd[1]: run-containerd-runc-k8s.io-6e7c32fba1d4.mount: Deactivated successfully.
-Nov 25 20:15:12 Brix systemd[1]: 7e8f93ad21bc-run.eXpRf.mount: Deactivated successfully.
-Nov 25 20:15:13 Brix systemd[1]: run-containerd-runc-k8s.io-2d8f1b46e79a.mount: Deactivated successfully.
-Nov 25 20:15:14 Brix systemd[1]: 8cf27a1d93eb-run.hDQwL.mount: Deactivated successfully.
-Nov 25 20:15:15 Brix systemd[1]: run-containerd-runc-k8s.io-3a7b2f49c8ed.mount: Deactivated successfully.
-Nov 25 20:15:16 Brix systemd[1]: 2db8e1f473ca-run.nJWZx.mount: Deactivated successfully.
-Nov 25 20:15:17 Brix systemd[1]: run-containerd-runc-k8s.io-4c6a2b89d7fe.mount: Deactivated successfully.
-Nov 25 20:15:18 Brix systemd[1]: 9eb1cf374a62-run.rMqYp.mount: Deactivated successfully.
+/ # tail -f /var/log/syslog
+2024-11-25T21:07:15.386754+00:00 ubuntu systemd[1]: Cannot find unit for notify message of PID 469315, ignoring.
+2024-11-25T21:07:16.228396+00:00 ubuntu systemd[1]: Cannot find unit for notify message of PID 469414, ignoring.
+2024-11-25T21:07:21.302263+00:00 ubuntu systemd[1]: Cannot find unit for notify message of PID 469482, ignoring.
+2024-11-25T21:07:21.551030+00:00 ubuntu systemd[1]: run-containerd-runc-k8s.io-e2489c98e9851ebd79310eac7d36b8aa6639d569c3fc9a25fc28dac75d4aa1df-runc.3WAJVu.mount: Deactivated successfully.
+2024-11-25T21:07:27.976456+00:00 ubuntu systemd[1]: Cannot find unit for notify message of PID 469813, ignoring.
+2024-11-25T21:07:33.632578+00:00 ubuntu systemd[1]: run-containerd-runc-k8s.io-ab9384ab0041eb6ebfa9ded8a1d3a51c8f5aec870714c15af1c730adfc976722-runc.zHksCB.mount: Deactivated successfully.
+^C
 ```
 
 4. Предоставить манифесты Deployment, а также скриншоты или вывод команды из п. 2.
