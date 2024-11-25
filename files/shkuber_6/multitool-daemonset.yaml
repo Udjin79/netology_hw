@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: multitool-daemonset
+spec:
+  selector:
+    matchLabels:
+      app: multitool-daemonset
+  template:
+    metadata:
+      labels:
+        app: multitool-daemonset
+    spec:
+      volumes:
+      - name: syslog
+        hostPath:
+          path: /var/log/syslog
+      containers:
+      - name: multitool
+        image: praqma/network-multitool
+        volumeMounts:
+        - name: syslog
+          mountPath: /var/log/syslog
