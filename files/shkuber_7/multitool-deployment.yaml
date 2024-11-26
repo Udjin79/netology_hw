@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: multitool-nfs
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: multitool-nfs
+  template:
+    metadata:
+      labels:
+        app: multitool-nfs
+    spec:
+      containers:
+      - name: multitool
+        image: praqma/network-multitool
+        tty: true
+        volumeMounts:
+        - name: nfs-storage
+          mountPath: /data
+      volumes:
+      - name: nfs-storage
+        persistentVolumeClaim:
+          claimName: nfs-pvc
