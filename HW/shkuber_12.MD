@@ -76,6 +76,44 @@ $ yc compute instance list
 3. Запуск etcd производить на мастере.
 4. Способ установки выбрать самостоятельно.
 
+master and worker nodes:
+```bash
+$ sudo swapoff -a
+sudo sed -i '/ swap / s/^\(.*\)$/#\1/g' /etc/fstab
+
+$ sudo tee /etc/modules-load.d/containerd.conf <<EOF
+overlay
+br_netfilter
+EOF
+sudo modprobe overlay
+sudo modprobe br_netfilter
+
+$ sudo tee /etc/sysctl.d/kubernetes.conf <<EOF
+net.bridge.bridge-nf-call-ip6tables = 1
+net.bridge.bridge-nf-call-iptables = 1
+net.ipv4.ip_forward = 1
+EOF
+sudo sysctl --system
+
+$ sudo apt install -y curl gnupg2 software-properties-common apt-transport-https ca-certificates
+sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmour -o /etc/apt/trusted.gpg.d/docker.gpg
+sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+sudo apt update
+sudo apt install -y containerd.io
+
+$ sudo apt install -y curl gnupg2 software-properties-common apt-transport-https ca-certificates
+sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmour -o /etc/apt/trusted.gpg.d/docker.gpg
+sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+sudo apt update
+sudo apt install -y containerd.io
+
+$ containerd config default | sudo tee /etc/containerd/config.toml >/dev/null 2>&1
+sudo sed -i 's/SystemdCgroup \= false/SystemdCgroup \= true/g' /etc/containerd/config.toml
+sudo systemctl restart containerd
+sudo systemctl enable containerd
+```
+
+
 master node:
 ```bash
 $ sudo kubeadm init
@@ -153,4 +191,4 @@ fhm634a0tis9ltr42mu7   Ready    <none>          6m30s   v1.28.1
 fhm74sh9s2mg7f8mqeag   Ready    <none>          6m24s   v1.28.1
 fhm77abiha764u6idmno   Ready    <none>          6m15s   v1.28.1
 fhmheo6ce2srlpfq47tb   Ready    control-plane   8m41s   v1.28.1
-
+```
